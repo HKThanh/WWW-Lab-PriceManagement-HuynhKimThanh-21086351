@@ -1,6 +1,8 @@
 package backend.data.repositories;
 
 import backend.data.entities.Product;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -39,6 +41,10 @@ public class ProductRepository {
 
     public List<Product> findAll() {
         return em.createQuery("SELECT p FROM Product p", Product.class).getResultList();
+    }
+
+    public Product findLatestProduct() {
+        return em.createQuery("SELECT p FROM Product p ORDER BY p.id DESC", Product.class).setMaxResults(1).getSingleResult();
     }
 
     public void close() {

@@ -44,6 +44,7 @@
 <body>
     <h1>WELCOME,</h1>
     <h1>List Products</h1>
+    <a href="controller?action=add_product">Add new product</a>
     <table>
         <tr>
             <th>Id</th>
@@ -54,8 +55,8 @@
         </tr>
         <%
             List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products");
-            if (products == null) {
-                out.println("<tr><td colspan='5' class=\"error\">No products found</td></tr>");
+            if (products == null) {out.println("<tr><td colspan='5' class=\"error\">No products found</td></tr>");
+
             } else {
                 for (ProductDTO product : products) {
         %>

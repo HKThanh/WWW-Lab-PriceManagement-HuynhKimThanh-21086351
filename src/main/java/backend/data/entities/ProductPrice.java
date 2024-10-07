@@ -21,11 +21,9 @@ public class ProductPrice {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @NotNull
     @Column(name = "value", nullable = false)
     private Double value;
 
-    @NotNull
     @Column(name = "apply_date", nullable = false)
     private LocalDate applyDate;
 
@@ -33,7 +31,6 @@ public class ProductPrice {
     @Column(name = "note", length = 250)
     private String note;
 
-    @NotNull
     @Column(name = "state", nullable = false)
     private Byte state;
 

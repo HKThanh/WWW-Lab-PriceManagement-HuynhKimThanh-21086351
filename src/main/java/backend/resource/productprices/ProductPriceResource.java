@@ -22,9 +22,15 @@ public class ProductPriceResource {
         return Response.ok(productPriceLocal.findProductPrice(id)).build();
     }
 
+//    @POST
+//    public Response addProductPrice(ProductPrice productPrice) {
+//        productPriceLocal.addProductPrice(productPrice);
+//        return Response.ok().build();
+//    }
+
     @POST
-    public Response addProductPrice(ProductPrice productPrice) {
-        productPriceLocal.addProductPrice(productPrice);
+    public Response addProductPrice(String json) {
+        productPriceLocal.addProductPriceByJson(json);
         return Response.ok().build();
     }
 

@@ -22,10 +22,41 @@ public class Controller extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
 
-        if (action.equalsIgnoreCase("list_products")) {
-            List<ProductDTO> products = productModel.getAllProducts();
-            req.setAttribute("products", products);
-            req.getRequestDispatcher("views/products.jsp").forward(req, resp);
+
+        switch (action.toLowerCase()) {
+            case "list_products":
+                List<ProductDTO> products = productModel.getAllProducts();
+                req.setAttribute("products", products);
+                req.getRequestDispatcher("views/products.jsp").forward(req, resp);
+                break;
+
+            case "add_product":
+                req.getRequestDispatcher("views/addProduct.jsp").forward(req, resp);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+
+        switch (action.toLowerCase()) {
+            case "save_product":
+                ProductDTO product = new ProductDTO();
+                product.setName(req.getParameter("name"));
+                product.setDescription(req.getParameter("description"));
+                product.setImgPath(req.getParameter("imgPath"));
+                product.setPrice(Double.parseDouble(req.getParameter("price")));
+
+                productModel.addProduct(product);
+                resp.sendRedirect("controller?action=list_products");
+                break;
+
+            default:
+                break;
         }
     }
 }

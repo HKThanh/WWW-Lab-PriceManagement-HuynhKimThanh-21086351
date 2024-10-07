@@ -18,6 +18,10 @@ public class ProductPriceBean implements ProductPriceLocal {
         productPriceRepository.save(productPrice);
     }
 
+    public void addProductPriceByJson(String json) {
+        productPriceRepository.saveByJson(json);
+    }
+
     @Override
     public void updateProductPrice(ProductPrice productPrice) {
         productPriceRepository.update(productPrice);

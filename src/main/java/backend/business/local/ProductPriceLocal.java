@@ -9,6 +9,8 @@ import java.util.List;
 public interface ProductPriceLocal {
     void addProductPrice(ProductPrice productPrice);
 
+    void addProductPriceByJson(String json);
+
     void updateProductPrice(ProductPrice productPrice);
 
     void deleteProductPrice(ProductPrice productPrice);

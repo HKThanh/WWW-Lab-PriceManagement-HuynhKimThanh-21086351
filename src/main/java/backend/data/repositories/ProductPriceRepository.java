@@ -1,9 +1,16 @@
 package backend.data.repositories;
 
+import backend.data.entities.Product;
 import backend.data.entities.ProductPrice;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.json.Json;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+import java.io.StringReader;
+import java.time.LocalDate;
 import java.util.List;
 
 public class ProductPriceRepository {
@@ -12,6 +19,28 @@ public class ProductPriceRepository {
 
     public void save(ProductPrice productPrice) {
         em.persist(productPrice);
+    }
+
+    public void saveByJson(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        try {
+            JsonNode node = mapper.readTree(json);
+            ProductPrice productPrice = new ProductPrice();
+            productPrice.setValue(node.get("value").asDouble());
+            String applyDateStr = node.get("applyDate").asText();
+            LocalDate applyDate = LocalDate.parse(applyDateStr);
+            productPrice.setApplyDate(applyDate);
+            Product product = em.find(Product.class, node.get("product").get("id").asLong());
+            productPrice.setProduct(product);
+            Byte state = Integer.parseInt(node.get("state").asText()) == 1 ? (byte) 1 : (byte) 0;
+            productPrice.setState(state);
+
+            save(productPrice);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ProductPrice findById(Long id) {

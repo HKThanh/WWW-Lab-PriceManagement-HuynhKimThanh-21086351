@@ -12,4 +12,5 @@ public interface ProductLocal {
     public void deleteProduct(Product product);
     public Product findProduct(long productId);
     public List<Product> findAllProducts();
+    Product findLatestProduct();
 }

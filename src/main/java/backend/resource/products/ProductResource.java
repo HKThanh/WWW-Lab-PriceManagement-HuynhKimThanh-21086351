@@ -25,6 +25,12 @@ public class ProductResource {
         return Response.ok(productLocal.findProduct(id)).build();
     }
 
+    @GET
+    @Path("/latest")
+    public Response getLatestProduct() {
+        return Response.ok(productLocal.findLatestProduct()).build();
+    }
+
     @POST
     public Response addProduct(Product product) {
         productLocal.addProduct(product);

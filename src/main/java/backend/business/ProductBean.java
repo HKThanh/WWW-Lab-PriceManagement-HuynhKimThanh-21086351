@@ -37,4 +37,11 @@ public class ProductBean implements ProductLocal {
     public List<Product> findAllProducts() {
         return productRepository.findAll();
     }
+
+    @Override
+    public Product findLatestProduct() {
+        return productRepository.findLatestProduct();
+    }
+
+
 }
