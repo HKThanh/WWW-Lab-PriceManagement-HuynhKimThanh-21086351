@@ -1,6 +1,7 @@
 package frontend.controllers;
 
 import backend.data.entities.Product;
+import frontend.dtos.ProductDTO;
 import frontend.models.ProductModel;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
@@ -22,9 +23,9 @@ public class Controller extends HttpServlet {
         String action = req.getParameter("action");
 
         if (action.equalsIgnoreCase("list_products")) {
-            List<Product> products = productModel.getAllProducts();
+            List<ProductDTO> products = productModel.getAllProducts();
             req.setAttribute("products", products);
-            req.getRequestDispatcher("view/products.jsp").forward(req, resp);
+            req.getRequestDispatcher("views/products.jsp").forward(req, resp);
         }
     }
 }

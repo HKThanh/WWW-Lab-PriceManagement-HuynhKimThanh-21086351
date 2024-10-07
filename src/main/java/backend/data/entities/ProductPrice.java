@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -26,7 +27,7 @@ public class ProductPrice {
 
     @NotNull
     @Column(name = "apply_date", nullable = false)
-    private Instant applyDate;
+    private LocalDate applyDate;
 
     @Size(max = 250)
     @Column(name = "note", length = 250)
@@ -60,11 +61,11 @@ public class ProductPrice {
         this.value = value;
     }
 
-    public Instant getApplyDate() {
+    public LocalDate getApplyDate() {
         return applyDate;
     }
 
-    public void setApplyDate(Instant applyDate) {
+    public void setApplyDate(LocalDate applyDate) {
         this.applyDate = applyDate;
     }
 

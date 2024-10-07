@@ -1,6 +1,5 @@
 package backend.data.repositories;
 
-import backend.data.entities.Product;
 import backend.data.entities.ProductPrice;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -40,6 +39,19 @@ public class ProductPriceRepository {
 
     public void deleteAll() {
         em.createQuery("DELETE FROM ProductPrice").executeUpdate();
+    }
+
+    public List<ProductPrice> findByProductId(Long productId) {
+        return em.createQuery("SELECT pp FROM ProductPrice pp WHERE pp.product.id = :productId", ProductPrice.class)
+                .setParameter("productId", productId)
+                .getResultList();
+    }
+
+    public ProductPrice findLatestPriceByProductId(Long productId) {
+        return em.createQuery("SELECT pp FROM ProductPrice pp WHERE pp.product.id = :productId ORDER BY pp.applyDate DESC", ProductPrice.class)
+                .setParameter("productId", productId)
+                .setMaxResults(1)
+                .getSingleResult();
     }
 
     public void close() {
