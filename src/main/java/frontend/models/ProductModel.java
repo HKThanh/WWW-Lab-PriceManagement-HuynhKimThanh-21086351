@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import frontend.dtos.ProductDTO;
+import jakarta.json.Json;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -13,7 +14,9 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProductModel {
@@ -63,11 +66,10 @@ public class ProductModel {
 
             try (Response productRes = target.request(MediaType.APPLICATION_JSON)
                     .post(Entity.json(jsonProduct))) {
-
                 double value = product.getPrice();
-                String jsonNewestProduct = getLastestProduct(value);
+                String jsonNewestProduct = getLastestProduct();
 
-                String applyDate = LocalDate.now().toString();
+                String applyDate = LocalDateTime.now().toString();
 
                 String note = "Initial price";
                 Byte state = 1;
@@ -87,7 +89,7 @@ public class ProductModel {
         }
     }
 
-    public String getLastestProduct (double value) {
+    public String getLastestProduct () {
         String jsonProduct = null;
         try {
             String json = getRequest("products/latest");
@@ -143,5 +145,90 @@ public class ProductModel {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void updateProduct(String id, ProductDTO product) {
+        try (Client client = ClientBuilder.newClient()) {
+            WebTarget target = client.target(BASE_URL).path("products/update/" + id);
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+
+            String json = mapper.writeValueAsString(product);
+            JsonNode rootNode = mapper.readTree(json);
+            String jsonProduct = "{\"id\":\"" + id
+                    + "\",\"name\":\"" + rootNode.get("name").asText()
+                    + "\",\"description\":\"" + rootNode.get("description").asText()
+                    + "\",\"imgPath\":\"" + rootNode.get("imgPath").asText() + "\"}";
+
+            target.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(jsonProduct));
+
+            ProductDTO oldProduct = getProductById(id);
+            double oldValue = oldProduct.getPrice();
+            if (product.getPrice() != oldValue) {
+                updateProductPrice(id, client, jsonProduct, product, oldValue, mapper);
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ProductDTO getProductById(String id) {
+        ProductDTO product = null;
+        try (Client client = ClientBuilder.newClient()) {
+            String json = getRequest("products/" + id);
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+
+            String jsonPrice = getRequest("productprices/latest/" + id);
+            JsonNode rootNode = mapper.readTree(jsonPrice);
+            JsonNode productPrice = rootNode.get("value");
+
+            product = mapper.readValue(json, ProductDTO.class);
+            product.setPrice(productPrice.asDouble());
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return product;
+    }
+
+    public void updateProductPrice(String productId, Client client, String jsonProduct, ProductDTO product, double oldValue, ObjectMapper mapper) throws JsonProcessingException {
+        WebTarget targetOldPrice = client.target(BASE_URL).path("productprices/old/" + productId);
+        String jsonOldPrice = targetOldPrice.request(MediaType.APPLICATION_JSON)
+                .get()
+                .readEntity(String.class);
+
+        JsonNode oldPriceNode = mapper.readTree(jsonOldPrice);
+        String oldPriceState = oldPriceNode.get("state").asText();
+
+        if (oldPriceState.equals("1")) {
+            String applyDate = oldPriceNode.get("applyDate").asText();
+            String note = "Update price state";
+            Byte state = 0;
+
+            WebTarget priceTarget = client.target(BASE_URL).path("productprices/update/" + oldPriceNode.get("id").asText());
+            String jsonProductPrice = String.format(
+                    "{\"applyDate\":\"%s\",\"value\":%f,\"note\":\"%s\",\"state\":%d,\"product\":%s}",
+                    applyDate, oldValue, note, state, jsonProduct
+            );
+            priceTarget.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(jsonProductPrice));
+        }
+
+        String applyDate = LocalDateTime.now().toString();
+
+        String note = "Update price";
+        Byte state = 1;
+
+        WebTarget priceTarget = client.target(BASE_URL).path("productprices");
+        String jsonProductPrice = String.format(
+                "{\"applyDate\":\"%s\",\"value\":%f,\"note\":\"%s\",\"state\":%d,\"product\":%s}",
+                applyDate, product.getPrice(), note, state, jsonProduct
+        );
+        priceTarget.request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(jsonProductPrice));
     }
 }

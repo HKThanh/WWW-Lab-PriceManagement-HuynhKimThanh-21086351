@@ -35,7 +35,7 @@ public class ProductResource {
     }
 
     @POST
-    @Path("/{id}")
+    @Path("update/{id}")
     public Response updateProduct(@PathParam("id") Long id, Product product) {
         productLocal.updateProduct(id, product);
         return Response.ok().build();

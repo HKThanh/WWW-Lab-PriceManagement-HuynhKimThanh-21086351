@@ -39,6 +39,12 @@ public class Controller extends HttpServlet {
                 resp.sendRedirect("controller?action=list_products");
                 break;
 
+            case "edit_product":
+                ProductDTO product = productModel.getProductById(id);
+                req.setAttribute("product", product);
+                req.getRequestDispatcher("views/editProduct.jsp").forward(req, resp);
+                break;
+
             default:
                 break;
         }
@@ -47,6 +53,7 @@ public class Controller extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
+        String id = req.getParameter("id");
 
         switch (action.toLowerCase()) {
             case "save_product":
@@ -54,12 +61,40 @@ public class Controller extends HttpServlet {
                 product.setName(req.getParameter("name"));
                 product.setDescription(req.getParameter("description"));
                 product.setImgPath(req.getParameter("imgPath"));
-                product.setPrice(Double.parseDouble(req.getParameter("price")));
+
+                String priceAdd = req.getParameter("price");
+                if (priceAdd != null && !priceAdd.isEmpty()) {
+                    try {
+                        product.setPrice(Double.parseDouble(priceAdd));
+                    } catch (NumberFormatException e) {
+                        product.setPrice(0.0);
+                    }
+                } else {
+                    product.setPrice(0.0);
+                }
 
                 productModel.addProduct(product);
                 resp.sendRedirect("controller?action=list_products");
                 break;
+            case "update_product":
+                ProductDTO productUpdate = new ProductDTO();
+                productUpdate.setName(req.getParameter("name"));
+                productUpdate.setDescription(req.getParameter("description"));
+                productUpdate.setImgPath(req.getParameter("imgPath"));
+                String price = req.getParameter("price");
+                if (price != null && !price.isEmpty()) {
+                    try {
+                        productUpdate.setPrice(Double.parseDouble(price));
+                    } catch (NumberFormatException e) {
+                        productUpdate.setPrice(0.0);
+                    }
+                } else {
+                    productUpdate.setPrice(0.0);
+                }
 
+                productModel.updateProduct(id, productUpdate);
+                resp.sendRedirect("controller?action=list_products");
+                break;
             default:
                 break;
         }

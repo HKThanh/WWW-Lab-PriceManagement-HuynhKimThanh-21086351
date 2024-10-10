@@ -23,8 +23,8 @@ public class ProductPriceBean implements ProductPriceLocal {
     }
 
     @Override
-    public void updateProductPrice(ProductPrice productPrice) {
-        productPriceRepository.update(productPrice);
+    public void updateProductPrice(Long id, ProductPrice productPrice) {
+        productPriceRepository.update(id, productPrice);
     }
 
     @Override
@@ -56,4 +56,11 @@ public class ProductPriceBean implements ProductPriceLocal {
     public void deleteAllByProductId(Long productId) {
         productPriceRepository.deleteAllByProductId(productId);
     }
+
+    @Override
+    public ProductPrice findOldPriceByProductId(Long productId) {
+        return productPriceRepository.findOldPriceByProductId(productId);
+    }
+
+
 }

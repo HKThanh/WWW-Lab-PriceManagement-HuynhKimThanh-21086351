@@ -10,7 +10,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import java.io.StringReader;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProductPriceRepository {
@@ -30,7 +32,7 @@ public class ProductPriceRepository {
             ProductPrice productPrice = new ProductPrice();
             productPrice.setValue(node.get("value").asDouble());
             String applyDateStr = node.get("applyDate").asText();
-            LocalDate applyDate = LocalDate.parse(applyDateStr);
+            LocalDateTime applyDate = LocalDateTime.parse(applyDateStr);
             productPrice.setApplyDate(applyDate);
             Product product = em.find(Product.class, node.get("product").get("id").asLong());
             productPrice.setProduct(product);
@@ -51,8 +53,17 @@ public class ProductPriceRepository {
         return em.createQuery("SELECT pp FROM ProductPrice pp", ProductPrice.class).getResultList();
     }
 
-    public void update(ProductPrice productPrice) {
-        em.merge(productPrice);
+    public void update(Long id, ProductPrice productPrice) {
+        ProductPrice existingProductPrice = findById(id);
+        if (existingProductPrice == null) {
+            return;
+        }
+        existingProductPrice.setValue(productPrice.getValue());
+        existingProductPrice.setApplyDate(productPrice.getApplyDate());
+        existingProductPrice.setProduct(productPrice.getProduct());
+        existingProductPrice.setState(productPrice.getState());
+        existingProductPrice.setState(productPrice.getState());
+        em.merge(existingProductPrice);
     }
 
     public void delete(ProductPrice productPrice) {
@@ -78,6 +89,13 @@ public class ProductPriceRepository {
 
     public ProductPrice findLatestPriceByProductId(Long productId) {
         return em.createQuery("SELECT pp FROM ProductPrice pp WHERE pp.product.id = :productId ORDER BY pp.applyDate DESC", ProductPrice.class)
+                .setParameter("productId", productId)
+                .setMaxResults(1)
+                .getSingleResult();
+    }
+
+    public ProductPrice findOldPriceByProductId(Long productId) {
+        return em.createQuery("SELECT pp FROM ProductPrice pp WHERE pp.product.id = :productId ORDER BY pp.applyDate ASC", ProductPrice.class)
                 .setParameter("productId", productId)
                 .setMaxResults(1)
                 .getSingleResult();

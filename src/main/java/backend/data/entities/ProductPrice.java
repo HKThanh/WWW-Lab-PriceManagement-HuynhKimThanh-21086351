@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -25,7 +26,7 @@ public class ProductPrice {
     private Double value;
 
     @Column(name = "apply_date", nullable = false)
-    private LocalDate applyDate;
+    private LocalDateTime applyDate;
 
     @Size(max = 250)
     @Column(name = "note", length = 250)
@@ -58,11 +59,11 @@ public class ProductPrice {
         this.value = value;
     }
 
-    public LocalDate getApplyDate() {
+    public LocalDateTime getApplyDate() {
         return applyDate;
     }
 
-    public void setApplyDate(LocalDate applyDate) {
+    public void setApplyDate(LocalDateTime applyDate) {
         this.applyDate = applyDate;
     }
 

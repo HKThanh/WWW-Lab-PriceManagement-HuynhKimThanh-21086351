@@ -35,8 +35,9 @@ public class ProductPriceResource {
     }
 
     @PUT
-    public Response updateProductPrice(ProductPrice productPrice) {
-        productPriceLocal.updateProductPrice(productPrice);
+    @Path("/update/{id}")
+    public Response updateProductPrice(@PathParam("id") Long id, ProductPrice productPrice) {
+        productPriceLocal.updateProductPrice(id, productPrice);
         return Response.ok().build();
     }
 
@@ -63,5 +64,11 @@ public class ProductPriceResource {
     public Response deleteAllByProductId(@PathParam("productId") Long productId) {
         productPriceLocal.deleteAllByProductId(productId);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/old/{productId}")
+    public Response getOldPriceByProductId(@PathParam("productId") long productId) {
+        return Response.ok(productPriceLocal.findOldPriceByProductId(productId)).build();
     }
 }

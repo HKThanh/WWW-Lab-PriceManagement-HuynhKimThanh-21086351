@@ -11,7 +11,7 @@ public interface ProductPriceLocal {
 
     void addProductPriceByJson(String json);
 
-    void updateProductPrice(ProductPrice productPrice);
+    void updateProductPrice(Long id, ProductPrice productPrice);
 
     void deleteProductPrice(ProductPrice productPrice);
 
@@ -24,4 +24,6 @@ public interface ProductPriceLocal {
     ProductPrice findLatestPriceByProductId(long productId);
 
     void deleteAllByProductId(Long productId);
+
+    ProductPrice findOldPriceByProductId(Long productId);
 }
