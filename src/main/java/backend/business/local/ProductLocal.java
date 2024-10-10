@@ -7,10 +7,11 @@ import java.util.List;
 
 @Local
 public interface ProductLocal {
-    public void addProduct(Product product);
-    public void updateProduct(Product product);
-    public void deleteProduct(Product product);
-    public Product findProduct(long productId);
-    public List<Product> findAllProducts();
+    void addProduct(Product product);
+    void updateProduct(Long id, Product product);
+    void deleteProduct(Product product);
+    Product findProduct(long productId);
+    List<Product> findAllProducts();
     Product findLatestProduct();
+    void deleteProductById(Long productId);
 }

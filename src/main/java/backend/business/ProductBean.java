@@ -19,8 +19,8 @@ public class ProductBean implements ProductLocal {
     }
 
     @Override
-    public void updateProduct(Product product) {
-        productRepository.update(product);
+    public void updateProduct(Long id, Product product) {
+        productRepository.update(id, product);
     }
 
     @Override
@@ -43,5 +43,8 @@ public class ProductBean implements ProductLocal {
         return productRepository.findLatestProduct();
     }
 
-
+    @Override
+    public void deleteProductById(Long productId) {
+        productRepository.deleteById(productId);
+    }
 }

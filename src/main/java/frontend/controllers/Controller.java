@@ -21,7 +21,7 @@ public class Controller extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-
+        String id = req.getParameter("id");
 
         switch (action.toLowerCase()) {
             case "list_products":
@@ -32,6 +32,11 @@ public class Controller extends HttpServlet {
 
             case "add_product":
                 req.getRequestDispatcher("views/addProduct.jsp").forward(req, resp);
+                break;
+
+            case "delete_product":
+                productModel.deleteProduct(Long.parseLong(id));
+                resp.sendRedirect("controller?action=list_products");
                 break;
 
             default:

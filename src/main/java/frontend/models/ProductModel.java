@@ -89,12 +89,8 @@ public class ProductModel {
 
     public String getLastestProduct (double value) {
         String jsonProduct = null;
-        try (Client client = ClientBuilder.newClient()) {
-            WebTarget target = client.target(BASE_URL).path("products/latest");
-
-            String json = target.request(MediaType.APPLICATION_JSON)
-                    .get()
-                    .readEntity(String.class);
+        try {
+            String json = getRequest("products/latest");
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
@@ -109,7 +105,7 @@ public class ProductModel {
                     + "\",\"name\":\"" + name
                     + "\",\"description\":\"" + description
                     + "\",\"imgPath\":\"" + imgPath + "\"}";
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
         return jsonProduct;
@@ -127,5 +123,25 @@ public class ProductModel {
             throw new RuntimeException(e);
         }
         return json;
+    }
+
+    public void deleteProduct(Long id) {
+        try (Client client = ClientBuilder.newClient()) {
+            WebTarget targetProductPrices = client.target(BASE_URL).path("productprices/deleteAll/" + id);
+            Response responseProductPrices = targetProductPrices.request(MediaType.APPLICATION_JSON).delete();
+
+            if (responseProductPrices.getStatus() != 200) {
+                throw new RuntimeException("Failed to delete product prices: HTTP error code : " + responseProductPrices.getStatus());
+            }
+
+            WebTarget targetProduct = client.target(BASE_URL).path("products/delete/" + id);
+            Response responseProduct = targetProduct.request(MediaType.APPLICATION_JSON).delete();
+
+            if (responseProduct.getStatus() != 200) {
+                throw new RuntimeException("Failed to delete product: HTTP error code : " + responseProduct.getStatus());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

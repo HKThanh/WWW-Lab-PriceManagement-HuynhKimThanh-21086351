@@ -20,8 +20,14 @@ public class ProductRepository {
         return em.find(Product.class, id);
     }
 
-    public void update(Product product) {
-        em.merge(product);
+    public void update(Long id, Product product) {
+        Product existingProduct = findById(id);
+        if (existingProduct != null) {
+            existingProduct.setName(product.getName());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setImgPath(product.getImgPath());
+            em.merge(existingProduct);
+        }
     }
 
     public void delete(Product product) {

@@ -51,4 +51,9 @@ public class ProductPriceBean implements ProductPriceLocal {
     public ProductPrice findLatestPriceByProductId(long productId) {
         return productPriceRepository.findLatestPriceByProductId(productId);
     }
+
+    @Override
+    public void deleteAllByProductId(Long productId) {
+        productPriceRepository.deleteAllByProductId(productId);
+    }
 }

@@ -57,4 +57,11 @@ public class ProductPriceResource {
     public Response getLatestPriceByProductId(@PathParam("productId") long productId) {
         return Response.ok(productPriceLocal.findLatestPriceByProductId(productId)).build();
     }
+
+    @Path("/deleteAll/{productId}")
+    @DELETE
+    public Response deleteAllByProductId(@PathParam("productId") Long productId) {
+        productPriceLocal.deleteAllByProductId(productId);
+        return Response.ok().build();
+    }
 }

@@ -83,6 +83,12 @@ public class ProductPriceRepository {
                 .getSingleResult();
     }
 
+    public void deleteAllByProductId(Long productId) {
+        em.createQuery("DELETE FROM ProductPrice pp WHERE pp.product.id = :productId")
+                .setParameter("productId", productId)
+                .executeUpdate();
+    }
+
     public void close() {
         em.close();
     }

@@ -52,6 +52,7 @@
             <th>Description</th>
             <th>imgPath</th>
             <th>Price</th>
+            <th colspan="2">Action</th>
         </tr>
         <%
             List<ProductDTO> products = (List<ProductDTO>) request.getAttribute("products");
@@ -66,6 +67,8 @@
                 <td><%= product.getDescription() %></td>
                 <td><%= product.getImgPath() %></td>
                 <td><%= product.getPrice() %></td>
+                <td><a href="controller?action=edit_product&id=<%= product.getId() %>">Edit</a></td>
+                <td><a href="controller?action=delete_product&id=<%= product.getId() %>">Delete</a></td>
             </tr>
         <%
                 }

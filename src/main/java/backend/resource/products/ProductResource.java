@@ -3,10 +3,7 @@ package backend.resource.products;
 import backend.business.local.ProductLocal;
 import backend.data.entities.Product;
 import jakarta.ejb.EJB;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 
 @Path("/products")
@@ -34,6 +31,20 @@ public class ProductResource {
     @POST
     public Response addProduct(Product product) {
         productLocal.addProduct(product);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("/{id}")
+    public Response updateProduct(@PathParam("id") Long id, Product product) {
+        productLocal.updateProduct(id, product);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/delete/{id}")
+    public Response deleteProduct(@PathParam("id") Long id) {
+        productLocal.deleteProductById(id);
         return Response.ok().build();
     }
 }

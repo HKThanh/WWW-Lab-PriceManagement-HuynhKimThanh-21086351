@@ -22,4 +22,6 @@ public interface ProductPriceLocal {
     List<ProductPrice> findProductPricesByProductId(long productId);
 
     ProductPrice findLatestPriceByProductId(long productId);
+
+    void deleteAllByProductId(Long productId);
 }
